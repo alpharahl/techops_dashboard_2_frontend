@@ -1,14 +1,24 @@
 <template>
   <div id="app">
-    Techops Check In System
+    <b-btn @click="hitUber">Fire!</b-btn>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   name: 'app',
   components: {
+  },
+
+  methods: {
+    hitUber(){
+      axios({
+        method: 'POST',
+        url: "http://localhost:3000/uber_proxy/attendee_search",
+      })
+    }
   }
 }
 </script>
