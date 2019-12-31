@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="userInvalid" class="err">
+      Sorry we did not find that users barcode, please use buttons directly.
+    </div>
     <div v-masonry
          class="d-flex flex-wrap"
          transition-duration="0.3s"
@@ -14,7 +17,11 @@
       </Shift>
     </div>
     <div class="d-flex justify-content-end">
-      <input type="text" placeholder="barcode" autofocus :value="barcode" />
+      <b-form-input type="text"
+             placeholder="barcode"
+             autofocus
+             class="mr-2"
+             v-model="barcode" />
     </div>
   </div>
 </template>
@@ -22,15 +29,18 @@
 <script>
   import axios from 'axios';
   import Shift from "@/components/Shift";
+  import _ from 'lodash';
 
   export default {
     name: "Shifts",
     components: {Shift},
-  props: ['department', 'departmentId', 'barcode'],
+    props: ['department', 'departmentId'],
     data(){
       return {
         shifts: [],
         currentTime: Date.parse('2020-01-02 02:00:00.000'),
+        barcode: "",
+        userInvalid: false
       }
     },
 
@@ -39,18 +49,14 @@
         var shifts = []
         var curTime = this.currentTime;
         this.shifts.forEach(shift => {
-          if (Date.parse(shift.start_time) < curTime + (3600000 / 4)){//Date.now()){
-            if (curTime < Date.parse(shift.end_time)){
+          if (Date.parse(shift.start_time) - (3600000 * 5) < curTime + (3600000 / 4)){//Date.now()){
+            if (curTime < Date.parse(shift.end_time) - (3600000 * 5)){
               shifts.push(shift)
             }
           }
         })
         return shifts
       },
-
-      updateBarcode() {
-        return this.barcode;
-      }
     },
 
     methods: {
@@ -68,6 +74,27 @@
           })
       },
 
+      updateBarcode: _.debounce(function(barcode){
+        axios.get('http://localhost:3000/uber_proxy/get_user_from_barcode', {
+          params: {
+            barcode: barcode
+          }
+        }).then(response => {
+          this.barcode = "";
+          this.getUsersShifts(response.data.result);
+        }).catch(() => {
+          this.userInvalid = true;
+          this.barcode = "";
+          setTimeout(() => {
+            this.userInvalid = false
+          }, 5000)
+        })
+      }.bind(this), 300),
+
+      getUsersShifts(attendee){
+        console.log('attendee:', attendee)
+      },
+
       updateTime(){
         this.currentTime = Date.now();
         setTimeout(this.updateTime, 10000)
@@ -77,7 +104,7 @@
     mounted(){
       console.log(this.departmentId)
       this.setup();
-      // this.updateTime();
+      this.updateTime();
       this.$bus.$on('shifts-updated', this.setup);
     },
 
@@ -85,8 +112,12 @@
       department(){
         this.setup();
       },
+
       barcode() {
-        this.updateBarcode();
+        console.log('barcode updated');
+        if (this.barcode !== ""){
+          this.updateBarcode(this.barcode);
+        }
       }
     }
   }
