@@ -40,7 +40,6 @@
 <style scoped>
 .shift{
   text-align: center;
-  max-width: 200px;
   margin: 10px;
   padding: 5px;
   border-radius: 10px;
