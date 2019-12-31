@@ -14,7 +14,7 @@
       </Shift>
     </div>
     <div class="d-flex justify-content-end">
-      barcode
+      <input type="text" placeholder="barcode" autofocus :value="barcode" />
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@
   export default {
     name: "Shifts",
     components: {Shift},
-    props: ['department', 'departmentId'],
+  props: ['department', 'departmentId', 'barcode'],
     data(){
       return {
         shifts: [],
@@ -46,6 +46,10 @@
           }
         })
         return shifts
+      },
+
+      updateBarcode() {
+        return this.barcode;
       }
     },
 
@@ -80,6 +84,9 @@
     watch:{
       department(){
         this.setup();
+      },
+      barcode() {
+        this.updateBarcode();
       }
     }
   }
