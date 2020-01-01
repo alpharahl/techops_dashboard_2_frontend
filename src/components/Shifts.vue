@@ -97,7 +97,8 @@
 
       updateTime(){
         this.currentTime = Date.now();
-        setTimeout(this.updateTime, 10000)
+        this.setup();
+        setTimeout(this.updateTime, 60000)
       }
     },
 
