@@ -13,8 +13,8 @@
              v-masonry-tile
              class="item"
              :shift="shift"
-      >
-      </Shift>
+             :user="user"
+      />
     </div>
     <div class="d-flex justify-content-end">
       <b-form-input type="text"
@@ -34,7 +34,7 @@
   export default {
     name: "Shifts",
     components: {Shift},
-    props: ['department', 'departmentId'],
+    props: ['department', 'departmentId', 'user'],
     data(){
       return {
         shifts: [],
@@ -75,7 +75,7 @@
       },
 
       updateBarcode: _.debounce(function(barcode){
-        axios.get('http://localhost:3000/uber_proxy/get_user_from_barcode', {
+        axios.get('http://10.101.22.58:3000/uber_proxy/get_user_from_barcode', {
           params: {
             barcode: barcode
           }

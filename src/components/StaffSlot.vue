@@ -19,7 +19,7 @@
 
   export default {
     name: "StaffSlot",
-    props: ['staffSlot'],
+    props: ['staffSlot', 'user'],
 
     computed: {
       worked(){
@@ -37,7 +37,8 @@
           method: 'POST',
           url: 'http://10.101.22.58:3000/uber_proxy/mark_shift_worked',
           params: {
-            shift_id: this.staffSlot.id
+            shift_id: this.staffSlot.id,
+            user: this.user
           }
         }).then(() => {
           this.$bus.$emit('shifts-updated')

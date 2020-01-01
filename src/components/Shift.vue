@@ -5,7 +5,8 @@
       v-for="(staff,ind) in shift.shifts"
       :key="ind"
       :staff-slot="staff"
-    ></staff-slot>
+      user="user"
+    />
   </div>
 </template>
 
@@ -14,7 +15,7 @@
   export default {
     name: "Shift",
     components: {StaffSlot},
-    props: ['shift'],
+    props: ['shift', 'user'],
     computed: {
       workedShifts() {
         var worked = [];
